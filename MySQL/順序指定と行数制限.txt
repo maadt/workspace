@@ -1,0 +1,81 @@
+<順序指定>
+取得結果の表示順を変更したいときには ORDER BY を利用します。
+ASC...昇順
+DESC...降順
+
+例文:ageの昇順
+SELECT
+    *
+FROM
+    `sample`
+ORDER BY
+    `age` ASC
+;
+
+例文:年齢の降順に並べて、同じ年齢ならidの昇順
+SELECT
+    *
+FROM
+    `sample`
+ORDER BY
+    `age` DESC,
+    `id` ASC
+;
+
+
+<行数制限>
+選択したデータのうち、最初の何件かだけを選択したい場合に LIMIT を利用します。
+先頭のデータから指定した行数のデータを選択します。
+
+例文:2レコード分のデータを選択
+SELECT
+    *
+FROM
+    `sample`
+LIMIT
+    2
+;
+
+
+<取得開始行数指定>
+OFFSETを利用すると選択するレコードの開始位置を指定できます。
+
+例文:4行目から選択
+SELECT
+    *
+FROM
+    `user`
+LIMIT
+    2
+OFFSET
+    3  <- 4行目が開始位置となる
+;
+
+例文:OFFSETの記述を省略
+SELECT
+    *
+FROM
+    `user`
+LIMIT
+    3, 2  <- 数値の記入が逆になる
+;
+
+注意しなければいけない点として、OFFSETは「0」からはじまります。
+1レコード目からデータを選択したい場合は、「OFFSET 0」と記述します。
+また、予期せぬデータを取得してしまわないよう、ORDER BYで並び順を保証した上で、LIMIT、OFFSETを利用するようにしましょう。
+
+
+<結合、集計、順序指定を同時に行う>
+例文:販売回数順に表示する
+SELECT
+    `d`.*
+FROM
+    `drinks` AS `d`
+LEFT JOIN
+    `sales_logs` AS `s`
+    ON `d`.`id` = `s`.`drink_id`
+GROUP BY
+    `d`.`id`
+ORDER BY
+    COUNT(`d`.`id`) DESC
+;

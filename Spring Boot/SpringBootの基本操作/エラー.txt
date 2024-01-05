@@ -1,0 +1,3 @@
+SpringBootコース/SpringBootの基本操作/モデル-準備-/02データベースの準備
+
+pgAdminでの接続設定の仕方がわからない

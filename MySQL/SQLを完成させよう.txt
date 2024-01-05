@@ -1,0 +1,307 @@
+
+
+次の条件をもとにデータを取得します。最終的には以下を満たしたデータを取得する必要があるので、どのような条件が設けられているのかを確認しておきましょう。
+・売り上げがなかったスイーツ数が2つ以上のもののみ取得する
+・売り上げがなかったスイーツ数の降順になるようにソートする
+・条件2が同数の場合は、メーカーIDでソートする
+
+エイリアス: メーカーID, メーカー名, 売り上げ無しスイーツ数
+
+
+<課題2>
+・全カラムのレコードを全件取得する
+・メーカーと紐づくスイーツのみ取得する
+・主テーブル名と今回結合するテーブルに別名をつける
+
+SELECT
+    `m`.`id` AS `メーカーID`,
+    `m`.`name` AS `メーカー名`,
+    `s`.`name` AS `スイーツ名`
+FROM
+    `maker_mst` AS `m`
+INNER JOIN `sweets_mst` AS `s`
+    ON `m`.`id` = `s`.`maker_mst_id`
+;
+
+模範解答
+SELECT
+	*
+FROM
+	`maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+;
+
+解説
+本Lessonで最終的に取得したい内容は、メーカー毎に売り上げがなかったスイーツの数となっているので、 sweets_mstテーブルを結合してメーカーと紐づくスイーツを取得する必要があります。
+また、メーカーに必ず紐づくスイーツを取得するので、INNER JOINで結合するようにしましょう。
+
+
+
+
+<課題3>
+もう一つテーブルを選定する必要があります。
+以下の条件を参考に、スイーツの売り上げの一覧を取得するようSQLを修正しなさい。
+
+条件
+・全カラムのレコードを全件取得する
+・売り上げがないスイーツについても取得する
+・今回結合するテーブルに別名をつける
+
+SELECT
+    *
+FROM
+    `maker_mst` AS `mm`
+LEFT JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT JOIN
+    `sales_logs` AS `sl`
+ON
+    `swm`.`id` = `sl`.`sweets_mst_id`;
+
+模範解答
+SELECT
+    *
+FROM
+    `maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT OUTER JOIN
+    `sales_logs` AS `sl`
+ON
+    `sl`.`sweets_mst_id` = `swm`.`id`
+;
+
+解説
+売り上げがないスイーツについても取得するということは、スイーツと紐づく売り上げ履歴がないということになります。
+よってLEFT OUTER JOINで外部結合するようにしましょう。
+
+
+<課題4>
+レコードの取得条件を加えましょう。
+前回の設問で取得したスイーツの売り上げ一覧の中から、売り上げのないレコードのみ取得するようSQLを修正しなさい。
+
+SELECT
+    *
+FROM
+    `maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT OUTER JOIN
+    `sales_logs` AS `sl`
+ON
+    `sl`.`sweets_mst_id` = `swm`.`id`
+WHERE
+    `sweets_mst_id` IS NULL
+;
+
+模範解答
+SELECT
+	*
+FROM
+	`maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT OUTER JOIN
+    `sales_logs` AS `sl`
+ON
+    `sl`.`sweets_mst_id` = `swm`.`id`
+WHERE
+    `sl`.`id` IS NULL
+;
+
+解説
+売り上げがないものは、スイーツと売り上げ履歴が紐づかないレコードといえるので、 sales_logsテーブルのレコードがNULLのものをWHERE句で取得するようにしましょう。
+また、WHERE句で指定するカラム名についてですが、 主キー以外のカラムを指定しまうと制約の都合上、初期値でNULLが入ってるものもあるので、 そのレコードが紐づいてるか否かを判断することができない場合があります。よって今回のsales_logsテーブルのidカラムのように、 IS NULLやIS NOT NULLで紐づくか否かを判別する場合は、テーブルの主キーを指定するようにしましょう。
+
+
+<課題5>
+重複するメーカーをグループ化するようSQLを修正しなさい。
+
+SELECT
+    COUNT(`swm`.`maker_mst_id`) AS `売り上げ無しスイーツ数`
+	`mm`.`id`
+    maker_mst`.`name`
+FROM
+	`maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT OUTER JOIN
+    `sales_logs` AS `sl`
+ON
+    `sl`.`sweets_mst_id` = `swm`.`id`
+WHERE
+    `sl`.`id` IS NULL
+GROUP BY
+    `売り上げ無しスイーツ数`
+;
+
+模範解答
+SELECT
+	*
+FROM
+	`maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT OUTER JOIN
+    `sales_logs` AS `sl`
+ON
+    `sl`.`sweets_mst_id` = `swm`.`id`
+WHERE
+    `sl`.`id` IS NULL
+GROUP BY
+    `mm`.`id`
+;
+
+GROUP BYで指定するカラムですが、重複するメーカーをグループ化したいので、 maker_mstテーブルのカラムを指定するようにしましょう。
+またNULLが入っている場合や重複データが入っていることも考慮して、必ずテーブルの主キーを指定するようにしましょう。
+よって今回はmaker_mstテーブルのidカラムを指定します。
+
+
+<課題6>
+前回の設問で、レコードをメーカー毎でグループ化したので、メーカーに紐づくレコードを集計することができるようになりました。
+次は、取得するカラムの選定と集計を行いましょう。
+以下の条件を参考に、メーカーID、メーカー名、売り上げのないスイーツ数を取得するようSQLを修正しなさい。
+
+SELECT
+	`mm`.`id` AS `メーカーID`,
+    `mm`.`name` AS `メーカー名`,
+    COUNT(`mm`.`id`) AS `売り上げ無しスイーツ数`
+FROM
+	`maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT OUTER JOIN
+    `sales_logs` AS `sl`
+ON
+    `sl`.`sweets_mst_id` = `swm`.`id`
+WHERE
+    `sl`.`id` IS NULL
+GROUP BY
+    `mm`.`id`
+;
+
+模範解答
+SELECT
+    `mm`.`id` AS `メーカーID`,
+    `mm`.`name` AS `メーカー名`,
+    COUNT(`swm`.`id`) AS `売り上げ無しスイーツ数`
+FROM
+    `maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT OUTER JOIN
+    `sales_logs` AS `sl`
+ON
+    `sl`.`sweets_mst_id` = `swm`.`id`
+WHERE
+    `sl`.`id` IS NULL
+GROUP BY
+    `mm`.`id`
+;
+
+
+<課題7>
+前回の設問で、売り上げのないスイーツ数の集計が完了しました。
+今度は集計結果に条件を追加していきましょう。
+売り上げのないスイーツ数が2個以上のレコードのみを取得するようSQLを修正しなさい。
+
+SELECT
+    `mm`.`id` AS `メーカーID`,
+    `mm`.`name` AS `メーカー名`,
+    COUNT(`swm`.`id`) AS `売り上げ無しスイーツ数`
+FROM
+    `maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT OUTER JOIN
+    `sales_logs` AS `sl`
+ON
+    `sl`.`sweets_mst_id` = `swm`.`id`
+WHERE
+    `sl`.`id` IS NULL
+GROUP BY
+    `mm`.`id`
+HAVING
+    COUNT(`swm`.`id`) >= 2
+;
+
+模範解答
+SELECT
+    `mm`.`id` AS `メーカーID`,
+    `mm`.`name` AS `メーカー名`,
+    COUNT(`swm`.`id`) AS `売り上げ無しスイーツ数`
+FROM
+    `maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT OUTER JOIN
+    `sales_logs` AS `sl`
+ON
+    `sl`.`sweets_mst_id` = `swm`.`id`
+WHERE
+    `sl`.`id` IS NULL
+GROUP BY
+    `mm`.`id`
+HAVING -- ☆追加箇所☆
+    `売り上げ無しスイーツ数` >= 2
+;
+
+集計結果へ条件を追加する場合は、WHEREではなくHAVINGを使用しましょう。 HAVINGにはAS句で指定した別名を使用できます。
+また2個以上という条件については、カウント数は整数とわかりきっているので> 1でも取得可能ですが、 他の人が見た時にわかりやすいように>= 2とするとなお良いです。
+
+
+<課題8>
+ここまでの設問で、必要なレコードはすべて出そろいました。
+あとは取得したレコードを並び変えるのみとなります。
+以下の条件を参考に、レコードを並び変えるようSQLを修正しなさい。
+・売り上げのないスイーツ数の降順で並び替える
+・1が同数の場合はメーカーIDの昇順で並び替える
+
+模範解答
+SELECT
+    `mm`.`id` AS `メーカーID`,
+    `mm`.`name` AS `メーカー名`,
+    COUNT(`swm`.`id`) AS `売り上げ無しスイーツ数`
+FROM
+    `maker_mst` AS `mm`
+INNER JOIN
+    `sweets_mst` AS `swm`
+ON
+    `swm`.`maker_mst_id` = `mm`.`id`
+LEFT OUTER JOIN
+    `sales_logs` AS `sl`
+ON
+    `sl`.`sweets_mst_id` = `swm`.`id`
+WHERE
+    `sl`.`id` IS NULL
+GROUP BY
+    `mm`.`id`
+HAVING
+    `売り上げ無しスイーツ数` >= 2
+ORDER BY
+    `売り上げ無しスイーツ数` DESC,
+    `メーカーID` ASC
+;

@@ -1,0 +1,33 @@
+PHP基礎コース/練習問題~MySQL~/SQLを完成させよう/SQLを完成させよう/課題5
+
+mysql> SELECT
+    -> *
+    -> FROM
+    -> `maker_mst` AS `mm`
+    -> INNER JOIN
+    ->     `sweets_mst` AS `swm`
+    -> ON
+    ->     `swm`.`maker_mst_id` = `mm`.`id`
+    -> LEFT OUTER JOIN
+    ->     `sales_logs` AS `sl`
+    -> ON
+    ->     `sl`.`sweets_mst_id` = `swm`.`id`
+    -> WHERE
+    ->     `sl`.`id` IS NULL
+    -> GROUP BY
+    ->     `mm`.`id`
+    -> ;
+ERROR 1055 (42000): Expression #3 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'sweets_earnings.swm.id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+
+
+
+13:31:18	CREATE DATABASE `sweets_earnings` CHARACTER SET utf8 COLLATE utf8_general_ci	Error Code: 1007. Can't create database 'sweets_earnings'; database exists	0.00065 sec
+
+
+ローカルホストの接続確認でエラー
+
+Incompatible/nonstandard server version or connection protocol detected (10.4.28).
+
+A connection to this database can be established but some MySQL Workbench features may not work properly since the database is not fully compatible with the supported versions of MySQL.
+
+MySQL Workbench is developed and tested for MySQL Server versions 5.6, 5.7 and 8.0

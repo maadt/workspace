@@ -1,0 +1,115 @@
+
+<サブクエリ>
+副問合せ(サブクエリ)...本来実行したいSQLを成立させるために、疑似的なテーブルとみなすための結果をあらかじめ別のSQLで取得しておく手法。
+例文:ageカラムで最大の5件を取得し、その結果だけ結合して、無駄な結合を行わないようにSQLを実行
+
+SELECT
+    *
+FROM (
+    -- 副問い合わせです
+    SELECT
+        *
+    FROM
+        `employees`
+    ORDER BY
+        `age` DESC
+    LIMIT
+        5
+    -- この場合は副問い合わせの結果に別名が必要です、今回はsub_table
+    ) AS `sub_table`
+-- 先にageが大きい5件を取得して、その5件だけに結合を行う
+LEFT JOIN `departments` AS `ds`
+    ON `sub_table`.`department_id` = `ds`.`id`
+;
+
+例ではFROM句で副問合せを使用していますが、WHERE句やSELECT句、JOIN句など様々な場面で利用ができます。
+
+
+<応用課題10>
+・kakeiboテーブルのレコード全体を確認して、計上種別が5件以上登録されている種別を持つレコードだけ出力したい
+・kakeiboテーブルのtype_id、idを昇順で並び替えること
+・エイリアスは出力結果の表の通りとすること
+・userやtypeはidを表示するのではなくnameを表示すること
+
+模範解答
+SELECT  <- 表示するカラムとエイリアスの設定
+    `k`.`id`,
+    `k`.`nitiji`,
+    `k`.`in`,
+    `k`.`out`,
+    `u`.`name` AS `user_name`,
+    `t`.`name` AS `type_name`
+FROM  <- kakeiboテーブルを結合元にする
+    `kakeibo` AS `k`
+LEFt JOIN `user` AS `u`  <- userテーブルを結合
+    ON `k`.`user_id` = `u`.`id`
+LEFt JOIN `type` AS `t`  <- typeテーブルを結合
+    ON `k`.`type_id` = `t`.`id`
+WHERE <- 条件を絞り込むための疑似的なテーブルを作成
+    `k`.`type_id` IN (  <- 複数のtype_idを使用したいのでIN句を利用
+        SELECT  <- 擬似的なテーブルに表示するカラムを設定
+            `type_id`
+        FROM  <- kakeiboテーブルを結合元にする
+            `kakeibo`
+        GROUP BY  <- kakeiboテーブルをtype_idでグループ化
+            `type_id`
+        HAVING  <- type_idの数をカウントして5件以上のtype_idのみを抽出
+            COUNT(`type_id`) >= 5
+    )
+ORDER BY  <- 昇順で並び替え
+    `k`.`type_id` ASC,
+    `k`.`id` ASC
+;
+
+
+<応用課題11>
+・kakeiboテーブルのレコードのうち、全レコードにおける各計上種別の登録比率を算出したい
+・計上種別の登録比率を算出した結果を小数点第三位で四捨五入し、ratioとして表示する
+・kakeiboテーブルのtype_idを昇順で並び替える
+・エイリアスは表の通りとする
+・typeはidとnameも表示する
+
+SELECT句では、t.nameにエイリアスを付けて出力結果の通りにしましょう。type_nameを取得するためにtypeテーブルを結合します。
+
+ratioの表示は、種別が登録されたレコード数とテーブルの全レコード数を取得するためにそれぞれ副問合せを利用しましょう。
+
+種別が登録されたレコード数は、副問合せの中でksub.type_idにてグループ化した上で、HAVING ksub.typeid = k.typeidとしてk.type_idだけを抽出します。全レコード数は、そのままレコードをカウントするだけです。
+
+それぞれの副問合せの結果を割って100掛けたものをROUND(計算結果, 2)すると、小数点第三位で四捨五入したratioになりますね。
+
+その後は、k.type_idとt.nameでグループ化します。最後にk.type_idを昇順で並び替えて完了です。
+
+
+
+模範解答
+SELECT  <- 表示するカラムとエイリアスの設定
+    `k`.`type_id`,
+    `t`.`name` AS `type_name`,
+    ROUND(((
+        SELECT
+            COUNT(`ksub`.`type_id`)
+        FROM
+            `kakeibo` AS `ksub`
+        GROUP BY
+            `ksub`.`type_id`
+        HAVING
+            `ksub`.`type_id` = `k`.`type_id`
+    ) / (
+        SELECT
+            COUNT(*)
+        FROM
+            `kakeibo`
+    ) * 100), 2) AS `ratio`
+FROM
+    `kakeibo` AS `k`  <- kakeiboテーブルを結合元にする
+INNER JOIN `type` AS `t`
+    ON `k`.`type_id` = `t`.`id`
+GROUP BY
+    `k`.`type_id`,
+    `t`.`name`
+ORDER BY
+    `k`.`type_id` ASC
+;
+
+ROUND関数...数値を特定の小数点以下の桁数で四捨五入するために使用されます。
+基本構文：ROUND(数値, 小数点以下の桁数);

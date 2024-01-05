@@ -1,0 +1,240 @@
+
+<DTOクラス作成手順>
+
+1, クラスの作成
+【com.example】パッケージ上で右クリック→【新規】→【クラス】を選択
+
+
+2, クラスの設定
+各項目を必要に応じて入力　→ 完了
+*パッケージ名は、Javaコーディング規約に沿って、すべて小文字で記載します。
+
+
+3, クラスの編集
+
+DTOクラスを定義するには決まったルールがあります。
+・クライアントから送信されるフィールドを全て定義する
+・フィールドの数に合わせてアクセサメソッド(setter、getter)を定義する
+
+以下例文
+
+package com.example.form;
+
+public class SampleForm {
+    // フォームから送信されるフィールド
+    private String name; // 名前
+    private String bloodType; // 血液型
+
+    // 以下、アクセスメソッド
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBloodType() {
+        return bloodType;
+    }
+
+    public void setBloodType(String bloodType) {
+        this.bloodType = bloodType;
+    }
+}
+
+
+
+<POSTパラメータの送り方>
+
+<form action="~" name="~" method="POST">  <!-- method="GET"とすればGETメソッドにより通信が可能 -->
+    <!-- 入力部品、送信ボタンなど -->
+</form>
+
+
+
+
+<GETパラメータの受信>
+
+1, RequestParamクラスのインポート
+import org.springframework.web.bind.annotation.RequestParam;
+
+2, GETメソッドによるリクエストを受け付ける
+@GetMapping(パス)  //GETメソッドによるリクエストを受け付ける
+public String メソッド名(@RequestParam(パラメータ名) 型 変数名)  //仮引数の先頭に@RequestParamを指定することで、GETパラメータを引数に渡す
+*引数名は任意で、パラメータの数ごとに引数を追加しましょう。
+
+以下例文
+/* 省略 */
+
+// 追加
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+@RequestMapping("lesson")
+public class LessonController {
+
+    /* 省略 */
+
+    @GetMapping("/request_test")  // 返り値をレスポンスとして扱います
+
+    @ResponseBody
+
+    // パラメータ名と仮引数名が同じな場合、@RequestParam String nameのようにパラメータ名の指定を省略できます
+    public String getTest(@RequestParam("name") String name, @RequestParam("bloodType") String bloodType) {
+        return "名前: " + name + "<br>血液型: " + bloodType;
+    }
+}
+
+
+
+<POSTパラメータの受信>
+
+1, PostMappingクラスおよび、DTOクラスのインポート
+import org.springframework.web.bind.annotation.PostMapping;
+import DTOクラスの完全修飾名;
+
+2, Postメソッドによるリクエストを受け付ける
+@PostMapping(パス)  //Postメソッドによるリクエストを受け付ける
+public String メソッド名(DTOクラス名 変数名)  //メッセージボディが代入されたDTOクラスのオブジェクトが実引数として渡されます
+
+以下例文
+import org.springframework.web.bind.annotation.PostMapping;
+import com.example.form.SampleForm;
+
+@Controller
+@RequestMapping("/lesson")
+
+public class LessonController {
+
+    /* 省略 */
+
+    @PostMapping("/request_test")  // POST通信で/lesson/request_testにリクエストした場合にpostTestを実行します
+    @ResponseBody
+    public String postTest(SampleForm sampleForm) {
+        return "名前: " + sampleForm.getName() + "<br>血液型: " + sampleForm.getBloodType();
+    }
+}
+
+3, フォーム用のメソッドをLessonControllerに追加。
+フォーム内でDTOクラスを利用するため、引数にSampleFormオブジェクトを指定します。
+
+以下例文
+import org.springframework.web.bind.annotation.PostMapping;
+import com.example.form.SampleForm;
+
+@Controller
+@RequestMapping("/lesson")
+
+public class LessonController {
+
+    /* 省略 */
+
+    @PostMapping("/request_test")  // POST通信で/lesson/request_testにリクエストした場合にpostTestを実行します
+    @ResponseBody
+    public String postTest(SampleForm sampleForm) {
+        return "名前: " + sampleForm.getName() + "<br>血液型: " + sampleForm.getBloodType();
+    }
+
+    @GetMapping("/form_test")
+    public String formTest(SampleForm sampleForm, Model model) {
+        model.addAttribute("sampleForm", sampleForm);
+        return "lesson/form_test";
+    }
+}
+
+
+4, HTMLでフォームの作成
+
+th:action
+・formタグのaction属性の内容を置換
+・値には@{パス}の形式でパスを指定
+例）th:action="@{/lesson/request_test}"
+
+th:object
+・フォームに利用するDTOクラスのオブジェクト名を設定
+・formタグに対して記述
+・値には${属性名}の形式でModel属性名を指定
+例）th:object="${sampleForm}"
+
+th:method
+・HTTPメソッドを指定するためにformタグに記載
+例）th:method="post"
+
+th:field
+・inputタグなどに対し、DTOオブジェクト内のフィールド名をname属性、値をvalue属性にセット
+・th:fieldの値には*{フィールド名}の形式で親要素にセットしたDTOクラスのフィールド名を指定
+・フィールド名をセットしない場合、th:valueとすることでHTMLのvalue属性に値を設定
+例１）th:field="*{name}"
+例２）th:field="*{bloodType}"
+
+以下例文
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>入力</title>
+</head>
+<body>
+    <form th:action="@{/lesson/request_test}" th:object="${sampleForm}" th:method="post">
+        <div>
+            <label for="name">名前：</label>
+            <input type="text" th:field="*{name}">  <!-- sampleForm.nameをセットします -->
+        </div>
+        <div>
+            <label for="bloodType">年齢：</label>
+            <input type="text" th:field="*{bloodType}">  <!-- sampleForm.bloodTypeをセットします -->
+        </div>
+        <button type="submit">送信</button>
+    </form>
+</body>
+</html>
+
+
+
+<パラメータやDTOクラスをそのままModel属性にセットする方法>
+今回のDTOクラスなどはコントローラ内で整形せずにそのままModel属性にセットしたいという場面があります。
+@ModelAttributeを引数の先頭に付けることで、引数を受け取る際に事前にModel属性にセットします。
+
+以下例文
+/* 省略 */
+
+// ModelAttributeクラスのインポート
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+@Controller
+@RequestMapping("lesson")
+public class LessonController {
+
+    /* 省略 */
+    @GetMapping("/form_test")
+    // SampleFormをModel属性にセットするだけであればModelクラスは不要になります
+    public String formTest(@ModelAttribute SampleForm sampleForm) {
+        return "lesson/form_test";
+    }
+}
+
+
+
+<GETパラメータをオプションにする方法>
+
+①エラーパターン
+・メソッドの引数にGETパラメータを設定するとパラメータは必須
+・name=太郎のようにGETパラメータに指定しないとエラーになる
+例文
+@GetMapping("/")
+public String test(@RequestParam("name") String name) {
+    // 処理
+}
+
+②required属性をfalseに指定するパターン
+・パラメータが存在しないケースを許容することが出来ます。
+・GETパラメータが送信されなかった場合、引数にはnullがセットされます。
+例文
+@RequestParam(value = "name", required = false) String name
+
+③defaultValue属性を記述するパターン
+・パラメータが送信されない場合のデフォルト値を指定できます。
+・例では、nameというパラメータがない状態でアクセスした場合、引数のnameに "名無し" がセットされます。
+例文
+@RequestParam(value = "name", required = false, defaultValue = "名無し") String name

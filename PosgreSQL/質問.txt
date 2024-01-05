@@ -1,0 +1,8 @@
+SELECT
+  indexname, ←ここの意味
+  indexdef ←ここの意味
+FROM
+  pg_indexes ←ここの意味
+WHERE
+  tablename = 'members'
+;

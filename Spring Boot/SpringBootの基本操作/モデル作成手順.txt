@@ -1,0 +1,41 @@
+<データベースの準備>
+
+1, pgAddminを起動
+2, サーバーを選択し右クリック →「Register」→「Server」を選択
+3, Generalタブの「Name」にユーザー名を入力
+4, Connectionタブの「Password」にパスワードを入力
+
+
+ユーザー名：MODEL_LESSON
+パスワード：postgre
+デフォルト表領域：USERS
+一時表領域：TEMP
+ロール：CONNECT、RESOURCE
+システム権限：すべて付与
+割当て容量：表領域は「USERS」、「無制限」にチェック、単位は「K」
+
+
+
+2, MODEL_LESSONユーザーで接続し、次のテーブルとデータを作成しておきましょう。
+
+-- 手順１
+CREATE TABLE EMPLOYEES (
+  ID NUMBER NOT NULL,
+  NAME VARCHAR2(255) NOT NULL,
+  DEPARTMENT VARCHAR2(255) NOT NULL,
+  PRIMARY KEY (ID)
+);
+
+-- 手順２
+CREATE SEQUENCE EMPLOYEE_ID_SEQ;
+
+INSERT INTO EMPLOYEES (ID, NAME, DEPARTMENT) VALUES (EMPLOYEE_ID_SEQ.nextval, '山田', '第一営業部');
+INSERT INTO EMPLOYEES (ID, NAME, DEPARTMENT) VALUES (EMPLOYEE_ID_SEQ.nextval, '田中', '開発部');
+INSERT INTO EMPLOYEES (ID, NAME, DEPARTMENT) VALUES (EMPLOYEE_ID_SEQ.nextval, '佐藤', '第二営業部');
+INSERT INTO EMPLOYEES (ID, NAME, DEPARTMENT) VALUES (EMPLOYEE_ID_SEQ.nextval, '伊藤', '第一営業部');
+INSERT INTO EMPLOYEES (ID, NAME, DEPARTMENT) VALUES (EMPLOYEE_ID_SEQ.nextval, '渡辺', '総務部');
+INSERT INTO EMPLOYEES (ID, NAME, DEPARTMENT) VALUES (EMPLOYEE_ID_SEQ.nextval, '清水', '開発部');
+
+-- データの挿入順を間違えた場合はSEQUENCEの削除、データの削除を行い、手順２をやり直してください
+-- DROP SEQUENCE EMPLOYEE_ID_SEQ;
+-- DELETE FROM EMPLOYEES;

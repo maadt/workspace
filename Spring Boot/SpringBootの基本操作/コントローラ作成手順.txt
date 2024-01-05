@@ -1,0 +1,45 @@
+
+0, 導入
+Controllerの作成にあたり、守らなければならないルールは以下の通りです。
+・src\main\java内にパッケージを用意する
+・決まったパッケージ 配下にControllerを配置する。
+・ファイル名はアッパーキャメルケースで 機能名Controller.java とする
+
+1, クラスの作成
+【com.example】パッケージ上で右クリック→【新規】→【クラス】を選択
+
+2, クラスの設定
+各項目を必要に応じて入力　→ 完了
+*パッケージ名は、Javaコーディング規約に沿って、すべて小文字で記載します。
+
+(以下クラスの編集)
+
+3, パッケージの指定
+package com.example.controller;
+
+4, アノテーションクラスのインポート
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+5, アノテーションの記述
+@Controller...記述することでフレームワークがこのクラスをControllerとして認識します。
+
+6, リクエストマッピングの記述
+@RequestMapping("/lesson")...ControllerにどんなURLでアクセスするのかを設定します。クラス、メソッドどちらにも指定が可能。
+http://localhost:8080/lesson というURLでリクエストできます。
+
+7, ゲットマッピングとレスポンスボディの記述
+public class LessonController {
+
+    @GetMapping("/sample")  //クラスに指定したURL以降のパスを指定します。
+    http://localhost:8080/lesson/sample にリクエストするとsample()にアクセスできます。
+
+    @ResponseBody  //メソッドの返り値自体をレスポンスに利用することができ、ブラウザは返り値を画面に出力します。
+    //返り値をブラウザが解読し画面に表示してくれます。
+
+    public String sample() {
+        return "Hello World!";
+    }
+}

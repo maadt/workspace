@@ -1,0 +1,93 @@
+PostgreSQLのインストールと初期設定
+
+1, Homebrewを使ってインストール 実行結果
+
+Last login: Tue Dec 26 21:40:35 on console
+tokunagakazuki@tokunagzukisAir ~ % brew install postgresql
+==> Downloading https://formulae.brew.sh/api/formula.jws.json
+######################################################################### 100.0%
+==> Downloading https://formulae.brew.sh/api/cask.jws.json
+######################################################################### 100.0%
+==> Downloading https://ghcr.io/v2/homebrew/core/postgresql/14/manifests/14.10_1
+######################################################################### 100.0%
+==> Fetching dependencies for postgresql@14: krb5 and readline
+==> Downloading https://ghcr.io/v2/homebrew/core/krb5/manifests/1.21.2
+######################################################################### 100.0%
+==> Fetching krb5
+==> Downloading https://ghcr.io/v2/homebrew/core/krb5/blobs/sha256:7d9d7b0073393
+######################################################################### 100.0%
+==> Downloading https://ghcr.io/v2/homebrew/core/readline/manifests/8.2.7
+######################################################################### 100.0%
+==> Fetching readline
+==> Downloading https://ghcr.io/v2/homebrew/core/readline/blobs/sha256:1cbe9a001
+######################################################################### 100.0%
+==> Fetching postgresql@14
+==> Downloading https://ghcr.io/v2/homebrew/core/postgresql/14/blobs/sha256:f302
+######################################################################### 100.0%
+==> Installing dependencies for postgresql@14: krb5 and readline
+==> Installing postgresql@14 dependency: krb5
+==> Downloading https://ghcr.io/v2/homebrew/core/krb5/manifests/1.21.2
+Already downloaded: /Users/tokunagakazuki/Library/Caches/Homebrew/downloads/1dac813e15dc58f7f64511565951ee43912a4a82b355448e23600e07b1b7107c--krb5-1.21.2.bottle_manifest.json
+==> Pouring krb5--1.21.2.arm64_ventura.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/krb5/1.21.2: 162 files, 5.6MB
+==> Installing postgresql@14 dependency: readline
+==> Downloading https://ghcr.io/v2/homebrew/core/readline/manifests/8.2.7
+Already downloaded: /Users/tokunagakazuki/Library/Caches/Homebrew/downloads/14125f7fa4b49853f76160b864f58379d90e52833ffeb8bd0643609bcd7f02a7--readline-8.2.7.bottle_manifest.json
+==> Pouring readline--8.2.7.arm64_ventura.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/readline/8.2.7: 50 files, 1.7MB
+==> Installing postgresql@14
+==> Pouring postgresql@14--14.10_1.arm64_ventura.bottle.tar.gz
+==> /opt/homebrew/Cellar/postgresql@14/14.10_1/bin/initdb --locale=C -E UTF-8 /o
+==> Caveats
+This formula has created a default database cluster with:
+  initdb --locale=C -E UTF-8 /opt/homebrew/var/postgresql@14
+For more details, read:
+  https://www.postgresql.org/docs/14/app-initdb.html
+
+To start postgresql@14 now and restart at login:
+  brew services start postgresql@14
+Or, if you don't want/need a background service you can just run:
+  /opt/homebrew/opt/postgresql@14/bin/postgres -D /opt/homebrew/var/postgresql@14
+==> Summary
+🍺  /opt/homebrew/Cellar/postgresql@14/14.10_1: 3,317 files, 45.4MB
+==> Running `brew cleanup postgresql@14`...
+Disable this behaviour by setting HOMEBREW_NO_INSTALL_CLEANUP.
+Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
+==> Caveats
+==> postgresql@14
+This formula has created a default database cluster with:
+  initdb --locale=C -E UTF-8 /opt/homebrew/var/postgresql@14
+For more details, read:
+  https://www.postgresql.org/docs/14/app-initdb.html
+
+To start postgresql@14 now and restart at login:
+  brew services start postgresql@14
+Or, if you don't want/need a background service you can just run:
+  /opt/homebrew/opt/postgresql@14/bin/postgres -D /opt/homebrew/var/postgresql@14
+
+
+
+2, 文字コードの設定 実行結果
+
+tokunagakazuki@tokunagzukisAir ~ % initdb /usr/local/var/postgres -E utf8
+The files belonging to this database system will be owned by user "tokunagakazuki".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "ja_JP.UTF-8".
+initdb: could not find suitable text search configuration for locale "ja_JP.UTF-8"
+The default text search configuration will be set to "simple".
+
+Data page checksums are disabled.
+
+initdb: error: directory "/usr/local/var/postgres" exists but is not empty
+If you want to create a new database system, either remove or empty
+the directory "/usr/local/var/postgres" or run initdb
+with an argument other than "/usr/local/var/postgres".
+
+
+
+
+3, 正しくインストールできたか確認 実行結果
+
+tokunagakazuki@tokunagzukisAir ~ % postgres --version
+postgres (PostgreSQL) 14.10 (Homebrew)

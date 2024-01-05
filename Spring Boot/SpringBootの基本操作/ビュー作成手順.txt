@@ -1,0 +1,117 @@
+
+<準備導入>
+
+1, build.gradleの編集
+
+テンプレートエンジンを利用するために、次のようにbuild.gradleを編集します。
+
+dependenciesのブロックにimplementation 'org.springframework.boot:spring-boot-starter-thymeleaf'を追記します。
+
+// 省略
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // 次の行を追加する
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+// 省略
+
+
+
+<テンプレート作成>
+
+1, ライブラリのダウンロード
+プロジェクトを選択し右クリック→【Gradle】→【Gradle プロジェクトのリフレッシュ】を選択します。
+
+2, 【templates】で右クリック→【新規】→【その他】を選択します。
+
+3, ウィザードに「html」と入力した後、【HTMLファイル】を選択して【次へ】ボタンを押します。
+
+4, 【新規HTMLファイル】画面で、ファイル名を入力して【完了】ボタンを押します。
+*ファイルの拡張子を.html にする
+*src\main\resources\templates ディレクトリ配下に設置する
+*ファイル名は呼び出し元のメソッド名と同名にすると管理しやすくなります
+
+
+
+<テンプレートの編集>
+
+<!DOCTYPE html>
+<!-- xmlns:th~は記載がなくても動作に支障はありませんが、
+    エディターにて構文エラーとしてあつかわれるため必ず記述しましょう -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Hello Spring Boot</title>
+</head>
+<body>
+    <h1>Hello world!!</h1>
+</body>
+</html>
+
+
+
+<テンプレートの指定>
+Controller内で表示するテンプレートを指定します。
+必ずreturn値にテンプレートファイル名を指定してください。
+つまりテンプレートの出力は、メソッドの最後に行う。
+
+/* 省略 */
+
+@Controller
+@RequestMapping("/lesson")
+
+public class LessonController {
+    @GetMapping("/sample")
+
+    // HTMLをレスポンスにする場合、@ResponseBodyを必ず削除します
+    public String sample() {
+        return "index";
+    }
+}
+
+
+
+<Model属性の保存>
+
+// Model属性を利用するためimportを追加
+import org.springframework.ui.Model;
+
+/* 省略 */
+
+@Controller
+@RequestMapping("/lesson")
+
+public class LessonController {
+
+    @GetMapping("/sample")  // Model型の値を必ず仮引数に持つ
+
+    public String sample(Model model) {
+
+        String text = "Hello Spring Boot!!";  // 変数定義
+        model.addAttribute("message", text);  // messageという属性名、Hello Spring Boot!!という値を追加します
+        return "index";
+
+    }
+}
+
+
+
+<テンプレートでModel属性を扱う>
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Hello Spring Boot</title>
+</head>
+<body>
+
+    <h1 th:text="${message}"></h1>　　<!-- Model属性に追加したmessageを出力します -->
+
+</body>
+</html>

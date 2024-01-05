@@ -1,0 +1,85 @@
+<結合>
+正規化したテーブル同士を自分の望む形に合体し、表示上だけは1つのテーブルとして扱う方法。
+データベース上は分かれていても結合を行うことで一つのテーブルがあるものとして作業ができます。
+
+
+<リレーション>
+結合する2つのテーブルがどのような結合関係にあるかを表すものです。
+
+・1対1...データの機密性を考慮する場合に分割することがあります。
+・1対多...AテーブルのレコードはBテーブルの複数のレコードと関連する可能性があり、BテーブルのレコードはAテーブルのレコードと最大一件のみ関連する場合、「1対多」の関係です。
+・多対多...AテーブルのレコードはBテーブルの複数のレコードと関連する可能性があり、BテーブルのレコードもAテーブルの複数のレコードと関連する可能性がある場合、「多対多」の関係です。中間テーブルというものを用いて複雑さを解決します。
+
+
+<中間テーブル>
+・2つの外部キーを持つこと
+・外部キーのカラムにはNULLが認められないこと
+
+
+<内部結合(INNER JOIN)>
+・結合を行う場合は、カラムがどのテーブルに属しているかがわかるように「テーブル名.カラム名」の形式で記述します。
+・内部結合は「INNER JOIN」で行います。「テーブルB」を「テーブルA」に内部結合します。
+・結合するための条件を記述します。「テーブルAのカラムとテーブルBのカラムの関連性」を表します。
+  例文
+  SELECT
+      `employees`.`id` AS `ID`,
+      `employees`.`name` AS `名前`,
+      `departments`.`name` AS `部署`
+  FROM
+      `employees`
+  INNER JOIN `departments`
+      ON `employees`.`department_id` = `departments`.`id`
+  ;
+
+・ASを利用してテーブルに別名をつけることで短く記述できます。
+・ASは選択したカラム名につけていましたがテーブル名に対しても利用できます。
+  例文
+  SELECT
+      `e`.`id` AS `ID`,
+      `e`.`name` AS `名前`,
+      `d`.`name` AS `部署`
+  FROM
+      `employees` AS `e`
+  INNER JOIN `departments` AS `d`
+      ON `e`.`department_id` = `d`.`id`
+  ;
+
+
+<外部結合(OUTER JOIN)>
+両方に存在するレコード、どちらか片方のテーブルにだけ存在するレコードも含めて選択する結合のこと。
+
+  例文
+  SELECT
+      `employees`.`id` AS `ID`,
+      `employees`.`name` AS `名前`,
+      `departments`.`name` AS `部署`
+  FROM
+      `employees`
+  LEFT JOIN `departments`(「OUTER」は省略可)
+      ON `employees`.`department_id` = `departments`.`id`
+  ;
+
+・LEFT OUTER JOIN
+「テーブルAとテーブルBで条件に合うレコード」＋「左テーブルのすべてのレコード」を選択できます。
+上記例文で言う「LEFT」とは「LEFT OUTER JOIN」の前に記述した employeesテーブル のことです。
+
+・RIGHT OUTER JOIN
+「テーブルAとテーブルBで条件に合うレコード」＋「右テーブルのすべてのレコード」を選択できます。
+上記例文で言う「RIGHT」とは「RIGHT OUTER JOIN」のあとに記述した departmentsテーブル のことです。
+
+この2つの結合はデータを左・右どちらにテーブルを中心に選択するかの違いだけで、本質的な違いはありません。できるだけどちらかの結合を統一して利用する。
+
+
+SELECT
+    `k`.`id`,
+    `k`.`nitiji`,
+    `t`.`name` AS `type`,
+    `k`.`in`,
+    `k`.`out`,
+    `k`.`user_id`
+FROM
+    `kakeibo` AS `k`
+INNER JOIN
+    `type` AS `t`
+    ON `k`.`type_id` = `t`.`id`
+;

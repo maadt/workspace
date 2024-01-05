@@ -1,0 +1,27 @@
+<コントローラ>
+受け付けたリクエストに応じて、ModelとViewを制御する役割をもちます。
+
+<アノテーションクラス>
+@から始まるものをすべてアノテーション(注釈の意)と言い、プログラムに特別な処理を追加することができます。
+
+<パス>
+http://localhost:8080 以降の部分(/sampleなど)
+
+
+<パスバリアブル>
+
+@PathVariable...パスに指定した値をメソッドへ渡す
+
+例文1
+@GetMapping("/test/{num}")  // パラメータを受け取る
+
+public String test(@PathVariable Integer num) {  // {num} の値を受け取る
+    // 省略
+}
+
+例文2
+@GetMapping("/find/{num}")  // パスにはnumを指定
+
+public String test(@PathVariable(name = "num") Integer number) {  // name = "num"としたことでパスの値を受け取れます
+    // 省略
+}

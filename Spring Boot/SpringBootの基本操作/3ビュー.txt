@@ -1,0 +1,82 @@
+<ビュー（View）>
+Controllerの指示に基づき、ブラウザに提供するためのHTMLを動的に構築します。
+テンプレートエンジンを利用し、Viewの機能を実装します。
+
+
+
+<テンプレートエンジン>
+HTMLのひな形（テンプレート）にプログラムを記述し、画面に出力するためのライブラリです。
+テンプレートエンジンを利用することで、サーバーサイドで用意した変数や処理を直接HTMLに記述できます。
+SpringではThymeleafと呼ばれるテンプレートエンジンを利用しています。
+
+
+
+<Thymeleaf>
+Thymeleaf（タイムリーフ）は、HTMLベースのテンプレートエンジンです。
+
+
+
+<th属性>
+th:から始まる構文。プログラムのような機能を実現することが出来ます。
+model.addAttribute()によってセットされたModel属性を利用するにはth:text属性を利用します。
+
+
+
+<ディレクトリを用いた管理>
+テンプレートファイルを保存する際には、Controller毎にディレクトリを作成するのが一般的です。
+メリット...機能ごとにファイルを分割できること
+          同名のファイルを作成できること
+
+例文
+
+@Controller
+@RequestMapping("/item")
+public class ItemController {
+    @GetMapping("/list")
+    public String list(Model model) {
+        return "item/list"; // templates¥item¥list.html を指している
+    }
+
+    @GetMapping("/create")
+    public String create(Model model) {
+        return "item/create"; // templates¥item¥create.html を指している
+    }
+
+    @GetMapping("/edit")
+    public String edit(Model model) {
+        return "item/edit"; // templates¥item¥edit.html を指している
+    }
+}
+
+階層が複数ある場合は、templatesを起点とし、すべてのディレクトリ名を/(スラッシュ)つなぎで記述しましょう。
+
+
+
+<依存関係の追加の補足>
+プロジェクト上で使用したいフレームワークやライブラリを追加（依存関係の追加）する場合は、build.gradleのdependenciesブロックにgroup属性、name属性、version属性を用いて定義します。
+
+dependencies {
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.3.4.RELEASE'
+}
+
+外部依存関係を定義するときは、ショートカット形式group:name:versionで記述することもできます。
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.3.4.RELEASE'
+}
+
+また、追加する対象がSpring Boot でサポートしている場合は依存関係のバージョンを指定する必要はありません。
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
+
+
+
+<build.gradle>
+Gradleというビルドツールの設定ファイルです。
+
+
+
+<ビルドツール>
+プログラムのコンパイルやデプロイ(ファイルの配置)などを自動化し効率化を図るために生まれたツール

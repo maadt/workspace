@@ -1,0 +1,76 @@
+<DML>
+MySQLにおけるDML（Data Manipulation Language）とは、データベース内のデータを操作するための言語の一部。
+
+挿入(INSERT)
+    例文
+    INSERT INTO
+        `users` (`id`, `name`, `age`)
+    VALUES
+        (1, 'yamada', 22)
+    ;
+・指定したカラムがNOT NULL制約でない場合はカラム名を省略でき、DEFAULTで指定した値が格納されます。
+・またAUTO_INCREMENTの指定があるカラム(例ではidカラム)は、自動的に次の連番の値で設定されます。今回の場合はidを指定せずに挿入することも可能です。
+
+選択(SELECT)
+    例文
+    SELECT
+        `name`,
+        `age`
+    FROM
+        `users`
+    ;
+・SELECTにはテーブルから出力したいカラム名を列挙し、FROMにはデータを取り出すテーブル名を指定します。
+・すべてのカラムを選択したい場合にはアスタリスク(*)を利用します。
+    例文
+    SELECT
+        *
+    FROM
+        `users`
+    ;
+・WHERE でデータを限定する
+・等しいかどうかを判断する=のほかにも、より大きいかを判断する>や、以下か判断する<=などの書き方もあります。
+    例文
+    SELECT
+        *
+    FROM
+        `users`
+    WHERE
+        `name` = 'yamada'
+    ;
+・AS で表示を置き換える
+　　 例文
+    SELECT
+        `id`,
+        `type` AS `計上種別`,
+        `out` AS `支出額`
+    FROM
+        `kakeibo`
+    WHERE
+        `out` < 5000
+    ;
+
+更新(UPDATE)
+    例文
+    UPDATE
+        `users`
+    SET
+        `age` = 40
+    WHERE
+        `name` = 'yamada'
+    ;
+・注意点は条件を指定しないとテーブル内のすべてのデータが更新されてしまうことです。次のSQLはusersテーブルのageカラムの値をすべて「40」に更新してしまいます。
+    例文
+    UPDATE
+        `users`
+    SET
+        `age` = 40
+    ;
+
+削除(DELETE)
+    例文
+    DELETE
+    FROM
+        `users`
+    WHERE
+        `id` = 1
+    ;

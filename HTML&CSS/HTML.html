@@ -1,0 +1,218 @@
+<!--
+  属性...要素に対する付加情報。付加できる情報は要素によって異なる。
+  例）以下はclass属性としてgreetingを指定。
+-->
+<h1 class="greeting">Hello World!!</h1>
+<!-- ブラウザにファイルをドラッグ＆ドロップすることで表示される -->
+
+
+<!--
+  HTML文書...HTMLの記述ルールに則り作成されたHTMLファイルのこと。
+  例）以下はHTML文書の基本的な構成要素。それぞれの要素はHTMLファイル内に複数記述してはならない。
+-->
+<!DOCTYPE html><!-- html要素、ルート要素と呼ぶ。全てのHTMLの親要素。 -->
+<html><!-- title要素と呼ぶ。ブラウザのタブに表示されるタイトルを設定する。 -->
+
+<head><!-- head要素と呼ぶ。HTMLファイルの情報を記述うするための要素。（ページのタイトル、ファイルの読み込みなど） -->
+  <title>タイトル</title>
+</head>
+
+<body><!-- body要素と呼ぶ。ブラウザで表示される要素を記述する。 -->
+  <!-- 画面に表示するもの -->
+</body>
+
+</html>
+
+
+<!--
+  ブロックレベル要素...ブロック要素とも言う。親要素と同じ幅を持つ。前後に改行が入る。高さ・幅を自由に指定できる。
+    例）
+    div...枠や領域を指定するために使う。
+    h1...見出しを表現する要素。もっとも大きい見出しがh1で数字が増えるにつれて小さくなる。
+      <h1>h1</h1>
+      <h2>h2</h2>
+    p...段落を表現する要素。文章を挿入する際に使われる。
+      <p>第1段落です</p>
+      <p>第2段落です</p>
+  インライン要素...高さ・幅の指定は出来ない。幅は子要素に依存する。続く要素の幅が親要素を超える場合改行される。改行したい場合は前後にブロック要素を入れる。
+    例）
+    span...子要素をインライン要素としてグループ化する。
+    a...アンカー要素。href属性に指定されたURLに遷移するためのハイパーリンク。俗にリンクと呼ばれるもの。
+      <a href="https://www.fox-hound.co.jp/home">FOXHOUND株式会社ホームページ</a>
+    br...改行。文末に記述する。
+      <p>
+        こんにちは。<br>
+        今日はいい天気ですね。
+      </p>
+    small...小さい文字を表現する。（注釈など）
+      <p>これは<small>小文字</small>です。</p>
+    img...src属性に画像のパスを指定することで画像を表示することができる。
+      <img src="画像のパス" width="400" height="60%">
+    iframe...ソシャゲーやブログなどHTML内に他のページを埋め込む際に使われる。
+      <iframe src="埋め込むページのURL"></iframe>
+-->
+
+
+<!--
+  ul...順序なしリストを意味する。(Under listの略)
+  li...リストの要素を意味する。（List Itemの略）
+  ol...順序付きリストを意味する。（Ordered Listの略）
+    <ol>
+      <li>りんご</li>
+      <li>みかん</li>
+      <li>バナナ</li>
+    </ol>
+  dl...用語と用語の説明リスト
+  dt...用語
+  dd...用語の説明
+    <dl>
+      <dt>用語</dt>
+      <dd>用語の説明</dd>
+    </dl>
+-->
+
+<!--
+  テーブル...ブラウザ上で表示できる表のこと
+  以下は例
+-->
+<table><!-- 表を作成するためのタグ -->
+  <thead><!-- thを配置する -->
+    <tr><!-- １行ごとに必ず配置する -->
+      <th>都道府県</th><!-- 見出しに関する要素 -->
+      <th>ふりがな</th>
+    </tr>
+  </thead>
+  <tbody><!-- tdを配置する -->
+    <tr>
+      <td>北海道</td><!-- データに関する要素 -->
+      <td>ほっかいどう</td>
+    </tr>
+    <tr>
+      <td>青森</td>
+      <td>あおもり</td>
+    </tr>
+    <tr>
+      <td>秋田</td>
+      <td>あきた</td>
+    </tr>
+  </tbody>
+</table>
+
+<!--
+  フォーム...ユーザーが情報を入力するための入力欄
+  以下例文
+-->
+<form action="送信先パス" method="post">
+</form>
+<!--入力欄の実装-->
+<form action="送信先" method="post">
+  <input type="email" name="email">
+  <input type="password" name="password">
+  <input type="submit" value="ログイン">
+</form>
+<!--
+  type="email" メールアドレスの形式で入力されているかチェックを行う
+  type="password" 入力内容を隠す
+  type="submit" ボタン表示になり、クリック時にフォームを送信する
+  また、type属性はインライン要素のためdivタグで改行する
+  以下例文
+-->
+<form action="送信先" method="post">
+  <div>
+    <input type="email" name="email">
+  </div>
+  <div>
+    <input type="password" name="password">
+  </div>
+  <div>
+    <input type="submit" value="ログイン">
+  </div>
+</form>
+
+<!--
+  ラベル...項目名を表示する
+-->
+<form action="送信先" method="post">
+  <div>
+    <label for="email">メールアドレス</label>
+    <input type="email" name="email" id="email">
+  </div>
+  <div>
+    <label for="password">パスワード</label>
+    <input type="password" name="password" id="password">
+  </div>
+  <div>
+    <input type="submit" value="ログイン">
+  </div>
+</form>
+<!--
+  ・action...フォームの送信先URLを指定する
+  ・method...フォームデータをサーバーに送信する時に使用されるHTTPメソッドを指定する。getとpostがある。
+  ・get...ブラウザのアドレスバーに表示される。主にデータの取得に使用される。
+  ・post...主にデータの送信に使用される。
+  ・labelのforとinputのidを一致させることで互いに関連づく
+  ・idの値はHTML上で一意である必要がある
+-->
+
+<!--
+  ・type属性の値によって様々な入力欄を提供する
+    text...テキスト
+    number...数値
+    password...パスワード
+    email...メールアドレス
+    radio...ラジオボタンでの選択
+    checkbox...チェックボックスでの選択
+    submit...送信ボタン
+
+  ・input要素に指定できる要素
+    value...入力値を指定
+    name...フォーム部品の名前を指定
+    checked...チェックボックスやラジオボタンを選択
+    required...入力必須。入力せずに送信しようとした場合警告を表示。
+    placeholder...入力欄内の入力に関するヒントを示したテキストを表示。
+-->
+
+<!--
+  セレクトボックス...プルダウン形式の入力ボックス
+  value...サーバーに送信する値
+  option...表示する内容。selectedを指定するとその選択肢を初期表示にできる
+-->
+<select name="sample">
+  <option value="" selected>-</option>
+  <option value="select1">選択肢1</option>
+  <option value="select2">選択肢2</option>
+  <option value="select3">選択肢3</option>
+</select>
+
+<!--
+  チェックボックス...選択肢をチェックして選択する入力フォーム
+  ・input要素にtype="checkbox"を指定することで利用できる
+  ・name属性を一致させることで複数のチェックボックスをグループ化できる
+  ・サーバーに送信する値はvalue属性に指定する
+  ・表示させる内容はinputの後に記述する
+  ・初期表示でチェックを入れたい場合は、チェックを入れたいinput要素の後にcheckedを指定する
+-->
+<input type="checkbox" name="sample" id="check1" checked>
+<label for="check1">選択肢1</label>
+<input type="checkbox" name="sample" id="check2">
+<label for="check2">選択肢2</label>
+<input type="checkbox" name="sample" id="check3">
+<label for="check3">選択肢3</label>
+
+<!--
+  ラジオボタン...複数の選択肢の中から一つだけ選択状態にする入力フォーム
+  ・input要素にtype="radio"を指定することで利用できる
+  ・その他はチェックボックスと同様
+-->
+<input type="radio" name="sample" id="radio1" checked>
+<label for="radio1">選択肢1</label>
+<input type="radio" name="sample" id="radio2">
+<label for="radio2">選択肢2</label>
+<input type="radio" name="sample" id="radio3">
+<label for="radio3">選択肢3</label>
+
+<!--
+  テキストエリア...複数行の自由入力フォーム
+  ・placeholder属性とrequired属性を指定できる
+-->
+<textarea name="sample" placeholder="メモを入力" required></textarea>

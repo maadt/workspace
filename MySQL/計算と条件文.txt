@@ -1,0 +1,113 @@
+<比較演算子>
+
+・=...左辺と右辺が等しいか
+・<>...左辺と右辺が等しくないか
+・>...左辺が右辺より大きいか
+・>=...左辺が右辺以上であるか
+・<...左辺が右辺未満であるか
+・<=...左辺が右辺以下であるか
+  例文
+  SELECT
+      *
+  FROM
+      `users`
+  WHERE
+      `name` = 'yamada'
+  ;
+
+・BETWEEN X AND Y...X~Yの範囲に含まれるか
+・NOT BETWEEN X AND Y...X~Yの範囲に含まれないか
+  例文
+  SELECT
+      *
+  FROM
+      `users`
+  WHERE
+      `age` BETWEEN 20 AND 25
+  ;
+
+・IN(a, b, c)...a,b,cのいずれかであるか
+・NOT IN(a, b, c)...a,b,cのいずれかでないか
+  例文
+  SELECT
+      *
+  FROM
+      `users`
+  WHERE
+      `age` IN(20, 30)
+  ;
+
+・IS NULL...値がNULLであるか
+・IS NOT NULL...値がNULLでないか
+  例文
+  SELECT
+      *
+  FROM
+      `users`
+  WHERE
+      `name` IS NULL
+  ;
+
+・LIKE...指定されたパターンに一致するか ( = で表現することもできる)
+・NOT LIKE, 指定されたパターンに一致しないか, name NOT LIKE 'yama%'
+  例文
+  SELECT
+      *
+  FROM
+      `user`
+  WHERE
+      `name` LIKE 'yama%'
+  ;
+
+・%, ワイルドカード
+  LIKE演算子ではワイルドカードを使用できます。特定の文字を表すための特殊な記号のことをワイルドカードといいます。
+  「%」は「0文字以上の文字列」を表します。ワイルドカードには「%」のほかにも、「任意の1文字」を表す「_」があります。
+  以下例
+        山    山野辺    有馬山    金山沢    山田
+  山%   〇      〇       ×        ×       〇
+  %山   〇      ×       〇        ×       ×
+  %山%  〇      〇       〇       〇       〇
+  山_   ×       ×       ×        ×        ×
+
+  (公式リファレンス https://dev.mysql.com/doc/refman/5.6/ja/comparison-operators.html)
+
+
+<論理演算子>
+
+・AND...a と b が共にTRUEの時にTRUE
+  例文
+  SELECT
+      *
+  FROM
+      `user`
+  WHERE
+      `id` = 1
+  AND　`name` = 'yamada'
+  ;
+
+・OR...a か b の少なくとも1つがTRUEの場合にTRUE
+  例文
+  SELECT
+      *
+  FROM
+      `user`
+  WHERE
+       `age` = 20
+  OR `age` = 30
+  ;
+
+
+<算術演算子>
+・+...a に b を加える
+・-...a から b を引く
+・*...a に b をかける
+・/...a を b で割る
+・DIV...a を b で割る(整数除算)
+・%...a を b で割った余り
+・MOD...a を b で割った余り
+  例文
+  SELECT
+      `price` * 1.10
+  FROM
+      `テーブル名`
+  ;

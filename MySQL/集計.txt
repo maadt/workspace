@@ -1,0 +1,74 @@
+<集計>
+ ・集約関数...指定したカラムの値を集計する関数
+ ・GROUP BY...同じ値を持つデータごとにグループ化する
+
+
+<集約関数>
+集約とは「複数のレコードを1レコードにまとめる」という意味。
+集約関数を利用すると、データを集約し、1つの結果を返す。
+
+・COUNT( )：テーブルのレコード数を数える
+・SUM( )：指定したカラムのデータを合計する
+・AVG( )：指定したカラムのデータを平均する
+・MAX( )：指定したカラムのデータ最大値を求める
+・MIN( )：指定したカラムのデータ最小値を求める
+
+例文
+SELECT
+    COUNT(`id`) AS `件数`,
+    SUM(`age`) AS `合計`,
+    AVG(`age`) AS `平均`,
+    MIN(`age`) AS `最小値`,
+    MAX(`age`) AS `最大値`
+FROM
+    `sample`
+;
+
+
+<GROUP BY>
+テーブルをグループに切り分けます。GROUP BYと集約関数をあわせて利用することで、「部署ごとの人数」のようなグループに切り分けたうえで集約できます。
+
+例文:部署ごとの人数
+GROUP BYの後には、departmentと記述していますが、ここにはグループ分けの基準となるカラムを指定します。
+
+SELECT
+    COUNT(`id`) AS `人数`,
+    `department` AS `部署`
+FROM
+    `sample`
+GROUP BY
+    `department`
+;
+
+
+<HAVING>
+グループに対して条件を指定してデータを選択するにはHAVINGを利用します。HAVINGを記述する位置は、GROUP BYより後ろである必要があります。
+(WHEREはレコードに対しての条件しか指定できず、グループに対する条件指定はできないという制限があります。)
+
+例文:部署ごとの人数が、3人以上の部署
+SELECT
+    COUNT(`id`) AS `人数`,
+    `department` AS `部署`
+FROM
+    `sample`
+GROUP BY
+    `department`
+HAVING
+    COUNT(`id`) >= 3
+;
+
+<結合と集計を同時に行う>
+例文
+SELECT
+    `k`.`type_id` AS `種別ID`,  <- カラムの選択と表示の設定
+    `t`.`name` AS `種別`,
+    SUM(`k`.`in`) AS `収入合計`,  <- 集計と表示の設定
+    SUM(`k`.`out`) AS `支出合計`
+FROM
+    `kakeibo` AS `k`  <- 結合元になるテーブル
+INNER JOIN
+    `type` AS `t`  <- 結合させるテーブル
+    ON `k`.`type_id` = `t`.`id`  <- 何を紐付けて結合させるか
+GROUP BY
+    `k`.`type_id`  <- 何でまとめたグループとするか
+;

@@ -1,0 +1,17 @@
+事象：作成したテーブルに接続出来ない
+
+経緯：1,「PHP基礎コース/練習問題~MySQL~/SQLを完成させよう/SQLを完成させよう」の教材ファイルをダウンロード。
+
+　　　2, MySQL Workbenchで教材のクエリ文を実行。正常に動作。
+
+　　　3, 一度ホーム画面に戻り、localhostに再接続。
+
+　　　4, SCHEMASからsweets_earningsを選択。「Table could not be fetched」と表示。以下エラー文。
+
+「14:09:48	Error loading schema content	Error Code: 1558 Column count of mysql.proc is wrong. Expected 21, found 20. Created with MariaDB 100108, now running 100428. Please use mysql_upgrade to fix this error」
+
+　　　5, localhostの接続確認でエラー。以下エラー文。
+
+「Incompatible/nonstandard server version or connection protocol detected (10.4.28).
+A connection to this database can be established but some MySQL Workbench features may not work properly since the database is not fully compatible with the supported versions of MySQL.
+MySQL Workbench is developed and tested for MySQL Server versions 5.6, 5.7 and 8.0」

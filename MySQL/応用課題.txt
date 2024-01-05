@@ -1,0 +1,240 @@
+<課題１>
+CREATE TABLE `drinks` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(11) NOT NULL DEFAULT '' COMMENT '商品名',
+    `price` int(11) NOT NULL DEFAULT 1 COMMENT '価格',
+    `stock` int(11) NOT NULL DEFAULT 0 COMMENT '在庫',
+    `maker_id` int(11) DEFAULT '0' COMMENT 'メーカーID',
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `makers` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) NOT NULL DEFAULT '' COMMENT 'メーカー名',
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `sales_logs` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `sale_time` datetime NOT NULL DEFAULT '2000-01-01 00:00:00' COMMENT '販売日時',
+    `drink_id` int(11) NOT NULL COMMENT '飲み物のID',
+    PRIMARY KEY (`id`)
+);
+
+<課題２>
+INSERT INTO
+    `drinks` (`name`, `price`, `stock`, `maker_id`)
+VALUES
+    ('water', 100, 3, 1),
+    ('tea', 120, 2, 2),
+    ('coffee', 120, 2, 2),
+    ('cola', 150, 3, 1),
+    ('beer', 300, 1, 3)
+;
+
+INSERT INTO
+    `makers` (`name`)
+VALUES
+    ('tanaka'),
+    ('suzuki'),
+    ('satou')
+;
+
+INSERT INTO
+    `sales_logs` (`sale_time`, `drink_id`)
+VALUES
+    ('2023-12-20', 1),
+    ('2023-12-20', 2),
+    ('2023-12-21', 3),
+    ('2023-12-22', 3),
+    ('2023-12-20', 4),
+    ('2023-12-23', 5),
+    ('2023-12-24', 2),
+    ('2023-12-20', 5),
+    ('2023-12-23', 4),
+    ('2023-12-24', 2)
+;
+
+<課題３>
+drinks の name のみの一覧を取得するSQLを作成してください。
+価格が安い順に並んでいることとします。
+
+SELECT
+    `name`
+FROM
+    `drinks`
+ORDER BY
+    `price` ASC
+;
+
+
+<課題４>
+drinks テーブルと makers テーブルを結合させ、drinks テーブルの name とストック数、紐づく makers テーブルの name 取得するSQLを作成してください。ストックの多い順に並んでいることとします。
+
+SELECT
+    `d`.`name` AS `種別ID`,
+    `d`.`name` AS `商品名`,
+    `d`.`stock` AS `在庫数`,
+    `m`.`name` AS `メーカー名`,
+    `m`.`id` AS `メーカーID`
+FROM
+    `drinks` AS `d`
+INNER JOIN
+    `makers` AS `m`
+    ON `d`.`maker_id` = `m`.`id`
+ORDER BY
+    `d`.`stock` DESC;
+
+
+
+<課題５>
+drinks テーブルの price の平均を取得するSQLを作成してください。
+
+SELECT
+    AVG(`price`) AS 平均
+FROM
+    `drinks`
+;
+
+
+<課題６>
+drinks テーブルを元に、sales_logs テーブルの売り上げ個数順に飲み物の情報を取得するSQLを作成してください。
+
+SELECT
+    COUNT(`s`.`drink_id`) AS `販売回数`,
+    `d`.`id` AS `商品ID`,
+    `d`.`name` AS `商品名`,
+    `d`.`price` AS `価格`,
+    `d`.`stock` AS `在庫数`
+FROM
+    `drinks` AS `d`
+INNER JOIN
+    `sales_logs` AS `s`
+    ON `d`.`id` = `s`.`drink_id`
+GROUP BY
+    `d`.`id`
+ORDER BY
+    COUNT(`s`.`drink_id`) DESC;
+
+模範解答
+SELECT
+    `d`.*
+FROM
+    `drinks` AS `d`
+LEFT JOIN
+    `sales_logs` AS `s`
+    ON `d`.`id` = `s`.`drink_id`
+GROUP BY
+    `d`.`id`
+ORDER BY
+    COUNT(`d`.`id`) DESC
+;
+
+
+<課題７>
+drinks テーブルを元に、sales_logs テーブルの売り上げ金額順に飲み物の情報を取得するSQLを作成してください。
+
+SELECT
+    `d`.`id` AS `商品ID`,
+    `d`.`name` AS `商品名`,
+    `d`.`price` AS `価格`,
+    COUNT(`s`.`drink_id`) AS `販売回数`,
+    `d`.`price` * COUNT(`s`.`drink_id`) AS `総売り上げ`
+FROM
+    `drinks` AS `d`
+LEFT JOIN
+    `sales_logs` AS `s`
+    ON `d`.`id` = `s`.`drink_id`
+GROUP BY
+    `d`.`id`
+ORDER BY
+    `総売り上げ` DESC;
+
+
+模範解答
+SELECT
+    `d`.*
+FROM
+    `drinks` AS `d`
+LEFT JOIN
+    `sales_logs` AS `s`
+    ON `d`.`id` = `s`.`drink_id`
+GROUP BY
+    `d`.`id`
+ORDER BY
+    SUM(`d`.`price`) DESC
+;
+
+
+<課題８>
+sales_logs テーブルを元に購入された飲み物の名前とその個数を取得するSQLを作成してください。ただし、購入されたものが２つ以上のもののみを取得することとします。
+
+SELECT
+    `d`.`name` AS `商品名`,
+    COUNT(`s`.`drink_id`) AS `販売回数`
+FROM
+    `sales_logs` AS `s`
+INNER JOIN
+    `drinks` AS `d`
+    ON `s`.`drink_id` = `d`.`id`
+GROUP BY
+    `d`.`name`
+HAVING
+    COUNT(`s`.`drink_id`) >= 2;
+
+模範解答
+SELECT
+    `d`.`name` AS `飲み物の名前`,
+    COUNT(`d`.`id`) AS `購入された個数`
+FROM
+    `sales_logs` AS `s`
+LEFT JOIN
+    `drinks` AS `d`
+    ON `s`.`drink_id` = `d`.`id`
+GROUP BY
+    `d`.`id`
+HAVING
+    `購入された個数` >= 2
+;
+
+<課題９>
+drinks , makers , sales_logs テーブルを使用し、メーカーID,メーカー名とメーカー毎の売り上げの合計を降順にて取得するSQLを作成してください。合計金額が同額の場合は、メーカーID順に表示することとします。
+
+SELECT
+    `m`.`id` AS `メーカーID`,
+    `m`.`name` AS `メーカー名`,
+    SUM(`d`.`price`) AS `売り上げ合計`
+FROM
+    `makers` AS `m`
+INNER JOIN
+    `drinks` AS `d`
+    ON `m`.`id` = `d`.`maker_id`
+LEFT JOIN
+    `sales_logs` AS `s`
+    ON `d`.`id` = `s`.`drink_id`
+GROUP BY
+    `m`.`id`
+ORDER BY
+    `売り上げ合計` DESC,
+    `メーカーID` ASC
+;
+
+模範解答
+SELECT
+    `m`.`id` AS `メーカーID`,
+    `m`.`name` AS `メーカー名`,
+    SUM(`d`.`price`) AS `メーカー毎の売り上げの合計`
+FROM
+    `makers` AS `m`
+LEFT JOIN
+    `drinks` AS `d`
+    ON `m`.`id` = `d`.`maker_id`
+LEFT JOIN
+    `sales_logs` AS `s`
+    ON `d`.`id` = `s`.`drink_id`
+GROUP BY
+    `m`.`id`
+ORDER BY
+    `メーカー毎の売り上げの合計` DESC,
+    `メーカーID` ASC
+;

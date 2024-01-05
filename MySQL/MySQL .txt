@@ -1,0 +1,126 @@
+<MySQL Workbench起動手順>
+1, XAMPPを開く
+2, Manage Servers タブを開く
+3, MySQL Databaseにカーソルを合わせる -> start
+4, MySQL Workbenchをクリック -> view -> Home
+
+<WorkbenchをMySQLに接続>
+1, ホーム画面 MySQL Connections 横の + をクリック
+2, Connection Name の設定　-> OK をクリック *その他変更不要
+
+<スキーマの生成>
+1, MySQL画面のスキーマ生成アイコンをクリック
+2, Schema Nameの設定
+3, Character Setの設定(utf8mb4)
+4, Collationの設定(utf8mb4_bin)
+  *utf8mb4, utf8mb4_binは日本語を利用するための指定。
+5, 実行されるSQLが表示されるので、Applyボタンをクリック
+  (CREATE SCHEMA `スキーマ名` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin ;)
+6, MySQL画面の SCHEMAS タブに作成したスキーマが表示される。
+
+<テーブルの生成>
+0, SCHEMAS から編集するスキーマをダブルクリック
+1, MySQL画面の SCHEMAS タブから編集するスキーマをダブルクリック
+2, テーブル生成アイコンをクリック(スキーマ生成アイコンの右隣)
+3, Name の設定
+4, Charset/Collation の設定
+5, Engine の設定
+6, テーブルの設定。click to edit をクリックして項目を追加
+7, それぞれ列名、データ型、制約を設定
+8, Apply をクリック
+9, 作成されるテーブルが表示される
+10, Apply をクリック
+
+
+<補足:設定画面について>
+・Charset（文字セット）...文字セットは、データベースが理解できる文字の集まり。
+　　utf8...ユニバーサル文字セットであるUnicodeを使用して、世界中のほぼすべての言語の文字をエンコードするための標準的な方法です。
+・Collation（照合順序）...文字列の比較やソートの際に用いられるルールセットです。
+  utf8_general_ci
+    utf8...多言語の文字を表現できるUnicodeを実装したものです。
+    general...照合順序が幅広い文字の比較に対して一般的なルールを使用。特定の言語の特殊な照合ルールはサポートしていない場合があります。
+    ci...case-insensitive（大文字と小文字を区別しない）の略。
+・Engine...データベース内のテーブルがどのようにデータを保存し、処理するかを決定するストレージエンジンのことを指します。
+  InnoDB...トランザクションをサポートし、高い信頼性とパフォーマンスを提供するため、最も一般的に使用されるストレージエンジンです。外部キー制約のサポート、行レベルのロッキング、クラッシュリカバリなどの特長を持っています。
+・column(カラム、列)...特定の列が文字データをどのように格納し、処理するかを決定します。
+・Data Type...テーブルの各列に格納されるデータの種類と形式を定義します。
+  CHAR...固定長で指定した長さに満たないデータは空白で埋められます。
+  VARCHAR...可変長で実際の文字列の長さのみを使用します。
+・PK(Primary Key)...テーブル内の各行を一意に識別するために使用される列または列の組み合わせ
+・NN(Not Null)...その列がNULL値を受け入れないことを意味します。
+・AI(AUTO_INCREMENT)...主にプライマリーキーの列に設定され、新しいレコードが挿入されるたびに自動的に一意な数値が生成されてその列に割り当てられるようにします。
+・Unsigned...その列が負の数を含まないこと、すなわち非負（正またはゼロ）の数値のみを含む。
+
+<SQLの編集>
+・左の「雷」アイコンは記入したSQL文を上から順番にすべて実行し、右の「雷」アイコンは現在カーソルを置いているSQL1文のみ実行します。
+・テーブルの削除はDROP TABLE文を使用します。
+   DROP TABLE `テーブル名`;
+   *注意しなければいけない点として、削除したテーブルとそのデータは元に戻せません。DROP TABLE文を実行する前によく確認しましょう。
+・テーブルの定義を変更するにはALTER TABLE文を使用します。
+  カラムの追加
+    ALTER TABLE `テーブル名`
+      ADD COLUMN `カラム名` varchar(45)
+    ;
+  カラム名の変更
+    ALTER TABLE `テーブル名`
+      CHANGE COLUMN `カラム名(前)` `カラム名(後)` varchar(45)
+    ;
+  カラムの削除
+    ALTER TABLE `テーブル名`
+      DROP COLUMN `カラム名`
+    ;
+
+
+<ターミナルからMySQLを使用する>
+(以下、手順0は初回のみ MySQLのインストール を行う)
+0, brew install mysql (Homebrewなどのパッケージマネージャを使用してMySQLをインストール)
+0, which mysql (インストールされているMySQLのバイナリがどこにあるかを見つける) → /opt/homebrew/bin/mysql
+0, brew services list (サーバーが実行されているかどうかを確認)
+
+1, brew services start mysql (MySQLを起動)
+   brew services restart mysql (MySQLを再起動)
+   brew services list (MySQLの状態を確認)
+2, mysql -u root -p (MySQLへ接続)
+
+(以下、クエリ文)
+3, CREATE DATABASE データベース名 CHARACTER SET utf8mb4 COLLATE utf8mb4_bin; (データベースの作成)
+4, SHOW DATABASES; (データベース一覧)
+   DROP DATABASE データベース名; (データベースの削除)
+5, USE データベース名; (データベースの選択)
+6, テーブルの作成 *以下は例
+   CREATE TABLE `テーブル名` (
+   -> `id` INT(11) NOT NULL AUTO_INCREMENT,
+   -> `name` VARCHAR(255) NOT NULL DEFAULT '',
+   -> `age` INT(3) NOT NULL,
+   -> PRIMARY KEY (`id`)
+   -> ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+7, SHOW TABLES; (テーブル一覧)
+   SELECT * FROM `テーブル名`; (テーブル取得)
+8, カラムの作成と値の追加　*以下は例
+　　INSERT INTO `テーブル名` (`id`, `name`, `age`)
+　　-> VALUES (1, ’yamada’, 22);
+
+(以下、コマンド)
+9, exit (作業終了時は必ず実行する)
+10, brew services stop mysql (MySQLを停止)
+
+
+-- テーブル内のデータを削除かつ初期化(AUTO_INCREMENTの値を初期化)
+TRUNCATE TABLE `type`;
+TRUNCATE TABLE `kakeibo`;
+
+
+<コラム>
+SQLは、大きく分けて3種類の言語から構成されています。データベースやテーブルの制御や操作をする際に使い分けられ、すべて命令文で動詞と目的語を組み合わせた構文です。
+
+1, データ定義言語 (DDL; Data Definition Language)
+  ・データベースやテーブルを作成するときに使います。
+  ・CREATE文(テーブルの作成)、DROP文(テーブルの削除)、ALTER文(テーブル定義の変更)などがデータ定義言語にあたります。
+
+2, データ操作言語 (DML; Data Manipulation Language)
+  ・テーブルからデータを取得したり、テーブルにデータを追加するときなどの、データを操作するときに使います。
+  ・INSERT文(レコードの追加)、DELETE文(レコードの削除)、UPDATE文(レコードの更新)、SELECT文(レコードの選択)などがデータ操作言語にあたります。
+
+3, データ制御言語 (DCL; Data Control Language)
+  ・データへのアクセスを制御するときに使います。
+  ・GRANT文(権限の付与)、REVOKE文(権限の剥奪)などがデータ定義言語にあたります。

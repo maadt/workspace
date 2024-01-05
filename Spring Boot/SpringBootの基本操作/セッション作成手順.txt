@@ -1,0 +1,194 @@
+1, コントローラークラスの作成
+
+
+2, HttpSessionインタフェースを利用する
+
+例文
+
+package com.example.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Controller
+@RequestMapping("/session")
+public class SessionController {
+
+    // HttpSession型のフィールドを定義する
+    private HttpSession session;
+
+    // コンストラクタを作成し、@Autowiredアノテーションを付与する
+    @Autowired
+
+    //引数にはHttpSessionインタフェースを渡す
+    public SessionController(HttpSession session) {
+
+        // フィールドに代入する
+        this.session = session;
+    }
+}
+
+
+3, 値の保存
+
+sessionも１つ１つがsession名と値でワンセットに保存されます。
+
+基本構文
+
+//HttpSessionのsetAttribute()メソッドによりsessionを保存します。
+this.session.setAttribute("session名", 値);
+
+
+例文
+
+/* 省略 */
+
+// 追加
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+@RequestMapping("/session")
+public class SessionController {
+
+    /* 省略 */
+
+    // 保存処理
+    // sessionの保存はよくPOSTメソッドにより行いますが、解説のためGETメソッドを採用しています
+    @GetMapping("/set")
+    @ResponseBody
+    public String set(@RequestParam("name") String name, @RequestParam("bloodType") String bloodType) {
+        // Sessionへの保存、完了を通知するset()メソッドを定義します。
+        //リクエストの度にパラメータをsessionに保存します。
+        this.session.setAttribute("name", name);
+        this.session.setAttribute("bloodType", bloodType);
+        return "保存しました";
+    }
+}
+
+
+
+4, 値の取得
+
+基本構文
+
+// HttpSessionのgetAttribute()メソッドを利用して値を取得します。
+// 返り値はObject型ですので、保存されているデータに応じて型変換する必要があります。
+// 名前に紐づいたデータがない場合はnullを返します
+this.session.getAttribute("session名");
+
+
+例文
+
+/* 省略 */
+public class SessionController {
+
+    /* 省略 */
+
+    // 取得
+    @GetMapping("/get")
+    @ResponseBody
+    public String get() {
+        String name = (String) this.session.getAttribute("name");
+
+        // sessionの値を取得し出力するget()メソッドを定義します。
+        String bloodType = (String) this.session.getAttribute("bloodType");
+        if (name == null) {
+            name = "名無し";
+        }
+        if (bloodType == null) {
+            bloodType = "不明";
+        }
+        return "名前: " + name + "<br>血液型: " + bloodType;
+    }
+}
+
+
+
+5, 値の削除
+
+基本構文
+
+//HttpSessionのremoveAttribute()メソッドを利用してsessionを削除します。
+this.session.removeAttribute("session名");
+
+
+例文
+
+/* 省略 */
+public class SessionController {
+
+    /* 省略 */
+
+    // 削除
+    // sessionの削除はよくPOSTメソッドにより行いますが、解説のためGETメソッドを採用しています
+    @GetMapping("/delete")
+    @ResponseBody
+
+    //sessionを削除するdelete()メソッドを定義します。
+    public String delete() {
+        // Session名を指定して削除
+        session.removeAttribute("name");
+        session.removeAttribute("bloodType");
+        return "削除しました";
+    }
+}
+
+
+
+<Session操作の確認>
+
+1, Sessionへデータを保存する
+  1, http://localhost:8080/session/set?name=太郎&bloodType=AB にアクセスする
+  2, 「保存しました」と表示される
+
+2, Sessionからデータを取得する
+  1, http://localhost:8080/session/get にアクセスする
+  2, 保存した情報が表示される
+
+3, Sessionからデータを削除する
+  1, http://localhost:8080/session/delete にアクセスする
+  2, 「削除しました」と表示される
+  3, http://localhost:8080/session/get にアクセスする
+  4, 名前： 名無し, 血液型： 不明と表示される
+
+
+
+
+<Beanクラスを使ったsession管理>
+
+・一つのsession情報の中に様々なフィールドを保存することが可能。
+・アクセサメソッドをカスタマイズすることで値の検査処理をBeanクラスに集約することが可能。
+
+例文
+
+package com.example.bean;
+
+public class Person {
+
+    private String name;
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+
+POST通信で学んだDTOクラスと同様にフォームのth:objectに指定するなど似たように扱えます。
+
+<!-- personというModel属性をセットしていた場合 -->
+<form th:action="@{/session/set}" th:object="${person}" th:method="get">
+    <div>
+        名前: <input type="text" th:field="*{name}" />
+    </div>
+    <input type="submit" value="保存する">
+</form>
+
+カスタマイズしたオブジェクトをSessionに保存する術を把握していると便利で業務でもしばしば利用されます。
